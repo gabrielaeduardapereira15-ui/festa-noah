@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmar Presença — Festa do Noah 🎉</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #b8d4f0 0%, #d8ecff 100%);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.4) 2px, transparent 2px);
+    background-size: 26px 26px; pointer-events: none;
+  }
+  .card {
+    background: white; border-radius: 28px; width: 100%; max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,80,180,0.2); overflow: hidden; position: relative; z-index: 1;
+  }
+  .card-header {
+    background: linear-gradient(135deg, #1a7acc, #0f5fa0);
+    padding: 28px 24px 36px; text-align: center; position: relative;
+  }
+  .card-header::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 24px; background: white; border-radius: 24px 24px 0 0;
+  }
+  .header-emoji { font-size: 48px; display: block; margin-bottom: 8px; }
+  .header-title { font-family: 'Fredoka One', cursive; font-size: 30px; color: white; }
+  .header-sub { font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; }
+  .card-body { padding: 8px 24px 28px; }
+  .info-strip { display: flex; gap: 6px; margin-bottom: 22px; flex-wrap: wrap; }
+  .info-pill {
+    display: flex; align-items: center; gap: 5px; background: #f0f7ff;
+    border: 1.5px solid #c8e0f8; border-radius: 20px; padding: 5px 12px;
+    font-size: 12px; font-weight: 700; color: #1a6ab0; flex: 1; justify-content: center; white-space: nowrap;
+  }
+  .section-label { font-family: 'Fredoka One', cursive; font-size: 16px; color: #1a7acc; margin-bottom: 10px; }
+  .divider { height: 1px; background: #e8f2ff; margin: 18px 0; }
+  .field { margin-bottom: 12px; }
+  .field-label { display: block; font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
+  .field-input {
+    width: 100%; padding: 11px 14px; border: 2px solid #d8eaff; border-radius: 12px;
+    font-family: 'Nunito', sans-serif; font-size: 15px; color: #1a1a1a; background: #fafcff;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field-input:focus { border-color: #1a7acc; box-shadow: 0 0 0 3px rgba(26,122,204,0.12); background: white; }
+  .field-input.error { border-color: #e03030; background: #fff8f8; }
+  .field-input[readonly] { background: #f0f7ff; color: #1a7acc; font-weight: 700; cursor: default; }
+  .row2 { display: flex; gap: 8px; }
+  .row2 > .field { flex: 1; margin-bottom: 0; }
+  .error-msg { font-size: 11px; color: #c03030; margin-top: 3px; display: none; }
+  .faixa-display {
+    font-weight: 800; font-size: 13px; padding: 7px 14px; border-radius: 10px; border: 2px solid;
+    text-align: center; margin-top: 6px; display: none;
+  }
+  .faixa-baby { background: #e8fce8; color: #2a8c2a; border-color: #b0deb0; }
+  .faixa-kid  { background: #fffbe8; color: #8c6c00; border-color: #e0d080; }
+  .faixa-adult{ background: #f0ecff; color: #5040a0; border-color: #c0b0e8; }
+  .companion-card {
+    background: #f5faff; border: 2px solid #d0e8ff; border-radius: 16px; padding: 14px; margin-bottom: 10px;
+  }
+  .companion-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .companion-title { font-size: 13px; font-weight: 800; color: #1a7acc; }
+  .btn-remove { background: #fee8e8; border: none; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #c03030; cursor: pointer; font-weight: 700; }
+  .btn-remove:hover { background: #fdd; }
+  .btn-add-companion {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 100%; padding: 10px; background: none; border: 2px dashed #1a7acc;
+    border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800;
+    font-size: 14px; color: #1a7acc; cursor: pointer; margin-top: 4px; transition: background 0.2s;
+  }
+  .btn-add-companion:hover { background: #f0f8ff; }
+  .btn-submit {
+    width: 100%; padding: 15px; background: linear-gradient(135deg, #1a7acc, #0f5fa0);
+    color: white; border: none; border-radius: 16px; font-family: 'Fredoka One', cursive;
+    font-size: 22px; cursor: pointer; box-shadow: 0 5px 18px rgba(26,122,204,0.35);
+    transition: transform 0.2s, box-shadow 0.2s; margin-top: 16px;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,122,204,0.45); }
+  .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+  .spinner {
+    display: inline-block; width: 18px; height: 18px;
+    border: 3px solid rgba(255,255,255,0.4); border-top-color: white;
+    border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #success-screen { display: none; padding: 30px 24px 36px; text-align: center; }
+  .success-emoji { font-size: 72px; display: block; margin-bottom: 14px; animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes pop { from { transform: scale(0) rotate(-10deg); } to { transform: scale(1); } }
+  .success-title { font-family: 'Fredoka One', cursive; font-size: 30px; color: #1a7acc; margin-bottom: 8px; }
+  .success-body { font-size: 15px; color: #555; line-height: 1.8; }
+  .success-body strong { color: #1a7acc; }
+  .success-date {
+    display: inline-flex; align-items: center; gap: 6px; background: #f0f8ff;
+    border: 2px solid #c8e0f8; border-radius: 12px; padding: 8px 16px;
+    font-weight: 800; font-size: 14px; color: #1a6ab0; margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <span class="header-emoji">🍼</span>
+    <div class="header-title">Confirmar Presença</div>
+    <div class="header-sub">Festa do Poderoso Noah · 1 aninho</div>
+  </div>
+
+  <div id="form-wrap">
+    <div class="card-body">
+      <div class="info-strip">
+        <div class="info-pill">📅 17 de Maio</div>
+        <div class="info-pill">⏰ 15h00</div>
+        <div class="info-pill">📍 Espaço Brito</div>
+      </div>
+
+      <div class="section-label">👤 Seus dados</div>
+
+      <div class="field">
+        <label class="field-label">Seu nome *</label>
+        <input type="text" class="field-input" id="guest-name" placeholder="Nome completo">
+        <div class="error-msg" id="err-name">Por favor, insira seu nome.</div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label class="field-label">Sua idade *</label>
+          <input type="number" class="field-input" id="guest-age" placeholder="Ex: 28" min="0" max="120" oninput="updateMainFaixa()">
+          <div class="error-msg" id="err-age">Informe a idade.</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Faixa etária</label>
+          <input type="text" class="field-input" id="guest-faixa" readonly placeholder="Automático">
+        </div>
+      </div>
+      <div id="main-faixa-display" class="faixa-display"></div>
+
+      <div class="divider"></div>
+      <div class="section-label">👨‍👩‍👧 Acompanhantes
+        <span style="font-size:12px;color:#aaa;font-family:'Nunito',sans-serif;font-weight:600;">(opcional)</span>
+      </div>
+
+      <div id="companions-list"></div>
+      <button class="btn-add-companion" type="button" onclick="addCompanion()">➕ Adicionar acompanhante</button>
+
+      <button class="btn-submit" id="btn-submit" onclick="submitForm()">🎉 Confirmar Presença!</button>
+    </div>
+  </div>
+
+  <div id="success-screen">
+    <span class="success-emoji">🥳</span>
+    <p class="success-title">Presença confirmada!</p>
+    <p class="success-body" id="success-text"></p>
+    <div class="success-date">📅 17 de Maio · 15h00 · Espaço Brito</div>
+  </div>
+</div>
+
+<script>
+  // ⚠️ Cole aqui o link do Google Apps Script após configurar
+  const SCRIPT_URL = 'COLE_O_LINK_AQUI';
+
+  let companionCount = 0;
+
+  function getFaixa(age) {
+    const a = parseInt(age);
+    if (isNaN(a) || String(age).trim() === '') return '';
+    if (a <= 5) return 'Até 5 anos';
+    if (a <= 10) return '6 a 10 anos';
+    return 'Adulto (11+)';
+  }
+
+  function getFaixaClass(f) {
+    if (f === 'Até 5 anos') return 'faixa-baby';
+    if (f === '6 a 10 anos') return 'faixa-kid';
+    return 'faixa-adult';
+  }
+
+  function updateMainFaixa() {
+    const age = document.getElementById('guest-age').value;
+    const faixa = getFaixa(age);
+    document.getElementById('guest-faixa').value = faixa;
+    const d = document.getElementById('main-faixa-display');
+    if (faixa) { d.textContent = '📊 ' + faixa; d.className = 'faixa-display ' + getFaixaClass(faixa); d.style.display = 'block'; }
+    else { d.style.display = 'none'; }
+  }
+
+  function addCompanion() {
+    companionCount++;
+    const id = companionCount;
+    const div = document.createElement('div');
+    div.className = 'companion-card'; div.id = 'comp-' + id;
+    div.innerHTML = `
+      <div class="companion-header">
+        <span class="companion-title">👤 Acompanhante ${id}</span>
+        <button class="btn-remove" onclick="removeCompanion(${id})">✕ Remover</button>
+      </div>
+      <div class="field">
+        <label class="field-label">Nome *</label>
+        <input type="text" class="field-input comp-name" placeholder="Nome completo">
+      </div>
+      <div class="row2" style="margin-top:10px;">
+        <div class="field" style="margin:0">
+          <label class="field-label">Idade *</label>
+          <input type="number" class="field-input comp-age" placeholder="Ex: 7" min="0" max="120" oninput="updateCompFaixa(this)">
+        </div>
+        <div class="field" style="margin:0">
+          <label class="field-label">Faixa</label>
+          <input type="text" class="field-input comp-faixa" readonly placeholder="Automático">
+        </div>
+      </div>
+      <div class="comp-faixa-display faixa-display"></div>
+    `;
+    document.getElementById('companions-list').appendChild(div);
+  }
+
+  function updateCompFaixa(input) {
+    const faixa = getFaixa(input.value);
+    const card = input.closest('.companion-card');
+    card.querySelector('.comp-faixa').value = faixa;
+    const d = card.querySelector('.comp-faixa-display');
+    if (faixa) { d.textContent = '📊 ' + faixa; d.className = 'faixa-display ' + getFaixaClass(faixa); d.style.display = 'block'; }
+    else { d.style.display = 'none'; }
+  }
+
+  function removeCompanion(id) {
+    const el = document.getElementById('comp-' + id);
+    if (el) el.remove();
+  }
+
+  async function submitForm() {
+    const name = document.getElementById('guest-name').value.trim();
+    const age = document.getElementById('guest-age').value.trim();
+    let valid = true;
+
+    document.getElementById('err-name').style.display = name ? 'none' : 'block';
+    document.getElementById('guest-name').classList.toggle('error', !name);
+    if (!name) valid = false;
+
+    document.getElementById('err-age').style.display = age ? 'none' : 'block';
+    document.getElementById('guest-age').classList.toggle('error', !age);
+    if (!age) valid = false;
+
+    document.querySelectorAll('.companion-card').forEach(item => {
+      const cn = item.querySelector('.comp-name').value.trim();
+      const ca = item.querySelector('.comp-age').value.trim();
+      item.querySelector('.comp-name').classList.toggle('error', !cn);
+      item.querySelector('.comp-age').classList.toggle('error', !ca);
+      if (!cn || !ca) valid = false;
+    });
+
+    if (!valid) return;
+
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enviando...';
+
+    const faixa = getFaixa(age);
+    const people = [{ nome: name, idade: parseInt(age), faixa, acompanhanteDe: 'Convidado principal' }];
+
+    document.querySelectorAll('.companion-card').forEach(item => {
+      const cn = item.querySelector('.comp-name').value.trim();
+      const ca = parseInt(item.querySelector('.comp-age').value.trim());
+      people.push({ nome: cn, idade: ca, faixa: getFaixa(ca), acompanhanteDe: name });
+    });
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pessoas: people })
+      });
+      showSuccess(name, people);
+    } catch(e) {
+      btn.disabled = false;
+      btn.innerHTML = '⚠️ Erro ao enviar. Tente novamente.';
+      btn.style.background = 'linear-gradient(135deg,#c03030,#8b0000)';
+    }
+  }
+
+  function showSuccess(mainName, people) {
+    document.getElementById('form-wrap').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    const companions = people.filter(p => p.acompanhanteDe !== 'Convidado principal');
+    let msg = `<strong>${mainName}</strong> confirmado(a) com sucesso! 🎊`;
+    if (companions.length > 0) {
+      msg += `<br><br>Acompanhantes:<br>` + companions.map(c => `👤 <strong>${c.nome}</strong> — ${c.faixa}`).join('<br>');
+    }
+    document.getElementById('success-text').innerHTML = msg;
+  }
+</script>
+</body>
+</html>
